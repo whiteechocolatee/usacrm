@@ -33,6 +33,7 @@ module.exports = {
     '.eslintrc.js',
     '.next/',
     'src/components/ui/',
+    'convex/',
     'prettier.config.js',
     './test.tsx',
     './tailwind.config.ts',
