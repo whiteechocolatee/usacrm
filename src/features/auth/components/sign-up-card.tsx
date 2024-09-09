@@ -23,6 +23,7 @@ type SignUpProps = {
 export function SignUpCard({ setState }: SignUpProps) {
   const { signIn } = useAuthActions();
 
+  const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -38,7 +39,7 @@ export function SignUpCard({ setState }: SignUpProps) {
 
     setPending(true);
 
-    signIn('password', { email, password, flow: 'signUp' })
+    signIn('password', { name, email, password, flow: 'signUp' })
       .catch(() => {
         setPending(false);
         setError('Something went wrong');
@@ -72,6 +73,14 @@ export function SignUpCard({ setState }: SignUpProps) {
             onChange={e => setEmail(e.target.value)}
             placeholder="Email"
             type="email"
+            required
+          />
+          <Input
+            disabled={pending}
+            value={name}
+            onChange={e => setName(e.target.value)}
+            placeholder="Full Name"
+            type="text"
             required
           />
           <Input
