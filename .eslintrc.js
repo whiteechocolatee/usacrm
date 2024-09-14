@@ -15,6 +15,7 @@ module.exports = {
   },
   plugins: ['react', 'jsx-a11y', 'import', '@typescript-eslint', 'react-hooks'],
   rules: {
+    'import/no-extraneous-dependencies': ['off'],
     'react/jsx-props-no-spreading': 'warn',
     'no-param-reassign': 'off',
     'react/require-default-props': 'warn',
