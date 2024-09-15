@@ -41,6 +41,8 @@ export const useCreateWorkspace = () => {
 
         return response;
       } catch (e) {
+        setStatus('error');
+
         options?.onError?.(e as Error);
 
         if (options?.throwError) {
