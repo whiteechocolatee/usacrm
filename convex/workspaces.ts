@@ -22,6 +22,11 @@ export const create = mutation({
       joinCode,
     });
 
+    await ctx.db.insert('channels', {
+      name: 'general',
+      workspaceId,
+    });
+
     await ctx.db.insert('members', {
       userId,
       workspaceId,
