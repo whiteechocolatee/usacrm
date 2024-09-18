@@ -1,5 +1,6 @@
 import { useGetChannels } from '@/features/channels/api/use-get-channels';
 import { useGetMembers } from '@/features/channels/api/use-get-members';
+import { useCreateChannelModal } from '@/features/channels/store/use-create-channel-modal';
 import { useCurrentMember } from '@/features/members/api/use-current-member';
 import { useGetWorkspace } from '@/features/workspaces/api/use-get-workspaces-by-id';
 import { useWorkspaceId } from '@/hooks/use-workspace-id';
@@ -16,6 +17,8 @@ import WorkspaceHeader from './workspace-header';
 import WorkspaceSection from './workspace-section';
 
 function WorkspaceSidebar() {
+  // eslint-disable-next-line
+  const [_open, setOpen] = useCreateChannelModal();
   const workspaceId = useWorkspaceId();
 
   const { data: member, isLoading: memberIsLoading } = useCurrentMember({
@@ -58,7 +61,11 @@ function WorkspaceSidebar() {
         <SidebarItem label="Threads" id="threads" icon={MessageSquareText} />
         <SidebarItem label="Drafts & Sent" id="threads" icon={SendHorizontal} />
       </div>
-      <WorkspaceSection label="Channels" hint="New Channel" onNew={() => {}}>
+      <WorkspaceSection
+        label="Channels"
+        hint="New Channel"
+        onNew={member.role === 'admin' ? () => setOpen(true) : undefined}
+      >
         {channelsIsLoading ? (
           <Loader className="size-5 shrink-0 text-white" />
         ) : (
