@@ -10,9 +10,11 @@ import { MdSend } from 'react-icons/md';
 import { PiTextAa } from 'react-icons/pi';
 
 import { cn } from '@/lib/utils';
-import { Image, Smile } from 'lucide-react';
+import { Image as ImageIcon, Smile, XIcon } from 'lucide-react';
+import Image from 'next/image';
 import { Delta, Op } from 'quill/core';
 import 'quill/dist/quill.snow.css';
+import EmojiPopover from './emoji-popover';
 import Hint from './hint';
 import { Button } from './ui/button';
 
@@ -23,7 +25,7 @@ type EditorValue = {
 
 interface EditorProps {
   variant?: 'create' | 'update';
-  onSubmit?: ({ image, body }: EditorValue) => void;
+  onSubmit: ({ image, body }: EditorValue) => void;
   onCancel?: () => void;
   placeholder?: string;
   disabled?: boolean;
@@ -41,6 +43,7 @@ function Editor({
   innerRef,
 }: EditorProps) {
   const [text, setText] = useState('');
+  const [image, setImage] = useState<File | null>(null);
   const [isToolbarVisible, setIsToolbarVisible] = useState(true);
 
   const containerRef = useRef<HTMLDivElement>(null);
@@ -50,6 +53,7 @@ function Editor({
   const quillRef = useRef<Quill | null>(null);
   const defaultValueRef = useRef<Delta | Op[]>(defaultValue);
   const disabledRef = useRef(disabled);
+  const imageElementRef = useRef<HTMLInputElement | null>(null);
 
   useLayoutEffect(() => {
     submitRef.current = onSubmit;
@@ -82,7 +86,22 @@ function Editor({
           bindings: {
             enter: {
               key: 'Enter',
-              handler: () => false,
+              handler: () => {
+                // eslint-disable-next-line
+                const currentText = quill.getText();
+                const addedImage = imageElementRef.current?.files?.[0] || null;
+
+                const isEmpty =
+                  !addedImage &&
+                  currentText.replace(/<(.|\n)*?>/g, '').trim().length === 0;
+
+                if (isEmpty) return;
+
+                // eslint-disable-next-line
+                const body = JSON.stringify(quill.getContents());
+
+                submitRef.current?.({ image: addedImage, body });
+              },
             },
             shift_enter: {
               key: 'Shift+Enter',
@@ -128,7 +147,15 @@ function Editor({
     };
   }, []);
 
-  const isEmpty = text.replace(/<(.|\n)*?>/g, '').trim().length === 0;
+  // eslint-disable-next-line
+  const onEmojiSelect = (emoji: any) => {
+    quillRef.current?.insertText(
+      quillRef.current.getSelection()?.index || 0,
+      emoji.native,
+    );
+  };
+
+  const isEmpty = !image && text.replace(/<(.|\n)*?>/g, '').trim().length === 0;
 
   const toggleToolbar = () => {
     setIsToolbarVisible(prev => !prev);
@@ -142,8 +169,45 @@ function Editor({
 
   return (
     <div className="flex flex-col">
-      <div className="flex flex-col border border-slate-200 rounded-md overflow-hidden focus-within:border-slate-300 focus-within:shadow-sm transition bg-white">
+      <input
+        type="file"
+        accept="image/*"
+        ref={imageElementRef}
+        className="hidden"
+        onChange={e => setImage(e.target.files![0])}
+      />
+      <div
+        className={cn(
+          'flex flex-col border border-slate-200 rounded-md overflow-hidden focus-within:border-slate-300 focus-within:shadow-sm transition bg-white',
+          disabled ? 'cursor-not-allowed opacity-50' : 'cursor-text',
+        )}
+      >
         <div className="h-full ql-custom" ref={containerRef} />
+        {!!image && (
+          <div className="p-2 ">
+            <div className="relative size-[62px] flex items-center justify-center group/image">
+              <Hint label="Remove image">
+                {/*  eslint-disable-next-line */}
+                <button
+                  type="button"
+                  onClick={() => {
+                    setImage(null);
+                    imageElementRef.current!.value = '';
+                  }}
+                  className="hidden group-hover/image:flex rounded-full bg-black/70 hover:bg-black absolute -top-2.5 -right-2.5 text-white size-6 z-[4] border-2 border-white items-center justify-center"
+                >
+                  <XIcon className="size-3.5" />
+                </button>
+              </Hint>
+              <Image
+                className="rounded-xl object-cover overflow-hidden"
+                alt="Image preview"
+                fill
+                src={URL.createObjectURL(image)}
+              />
+            </div>
+          </div>
+        )}
         <div className="flex px-2 pb-2 z-[5]">
           <Hint label={`${isToolbarVisible ? 'Show' : 'Hide'} formatting`}>
             <Button
@@ -155,25 +219,20 @@ function Editor({
               <PiTextAa className="size-4" />
             </Button>
           </Hint>
-          <Hint label="Emoji">
-            <Button
-              disabled={disabled}
-              size="iconSm"
-              variant="ghost"
-              onClick={() => {}}
-            >
+          <EmojiPopover onEmojiSelect={onEmojiSelect}>
+            <Button disabled={disabled} size="iconSm" variant="ghost">
               <Smile className="size-4" />
             </Button>
-          </Hint>
+          </EmojiPopover>
           {variant === 'create' && (
             <Hint label="Image">
               <Button
                 disabled={disabled}
                 size="iconSm"
                 variant="ghost"
-                onClick={() => {}}
+                onClick={() => imageElementRef.current?.click()}
               >
-                <Image className="size-4" />
+                <ImageIcon className="size-4" />
               </Button>
             </Hint>
           )}
@@ -189,7 +248,12 @@ function Editor({
               </Button>
               <Button
                 disabled={disabled || isEmpty}
-                onClick={() => {}}
+                onClick={() => {
+                  onSubmit({
+                    body: JSON.stringify(quillRef.current?.getContents()),
+                    image,
+                  });
+                }}
                 size="sm"
                 className="bg-[#007a5a] hover:bg-[#007a5a] text-white"
               >
@@ -200,7 +264,14 @@ function Editor({
           {variant === 'create' && (
             <Button
               disabled={disabled || isEmpty}
-              onClick={() => {}}
+              onClick={() => {
+                onSubmit({
+                  body: JSON.stringify(quillRef.current?.getContents()),
+                  image,
+                });
+
+                quillRef.current?.setContents([]);
+              }}
               size="iconSm"
               className={cn(
                 'ml-auto',
@@ -214,11 +285,13 @@ function Editor({
           )}
         </div>
       </div>
-      <div className="p-2 text-[10px] text-muted-foreground flex justify-end">
-        <p>
-          <strong>Shift + Enter to add a new line</strong>
-        </p>
-      </div>
+      {variant === 'create' && (
+        <div className="p-2 text-[10px] text-muted-foreground flex justify-end">
+          <p>
+            <strong>Shift + Enter</strong> to add a new line
+          </p>
+        </div>
+      )}
     </div>
   );
 }
