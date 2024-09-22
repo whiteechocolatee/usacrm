@@ -23,8 +23,8 @@ type InviteModalProps = {
 function InviteModal({ open, setOpen, name, joinCode }: InviteModalProps) {
   const workspaceId = useWorkspaceId();
   const [ConfirmationDialog, confirm] = useConfirm(
-    'Are you sure?',
-    'This will deactivate current invitations.',
+    'Are you absolutely sure?',
+    'This action cannot be undone. This will deactivate current invitations.',
   );
 
   const { mutate, isPending } = useNewJoinCode();
