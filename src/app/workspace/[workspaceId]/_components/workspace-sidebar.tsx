@@ -3,6 +3,7 @@ import { useGetMembers } from '@/features/channels/api/use-get-members';
 import { useCreateChannelModal } from '@/features/channels/store/use-create-channel-modal';
 import { useCurrentMember } from '@/features/members/api/use-current-member';
 import { useGetWorkspace } from '@/features/workspaces/api/use-get-workspaces-by-id';
+import { useChannelId } from '@/hooks/use-channel-id';
 import { useWorkspaceId } from '@/hooks/use-workspace-id';
 import {
   AlertTriangle,
@@ -20,6 +21,7 @@ function WorkspaceSidebar() {
   // eslint-disable-next-line
   const [_open, setOpen] = useCreateChannelModal();
   const workspaceId = useWorkspaceId();
+  const channelId = useChannelId();
 
   const { data: member, isLoading: memberIsLoading } = useCurrentMember({
     workspaceId,
@@ -74,6 +76,7 @@ function WorkspaceSidebar() {
               key={item._id}
               label={item.name}
               id={item._id}
+              variant={channelId === item._id ? 'active' : 'default'}
               icon={HashIcon}
             />
           ))
