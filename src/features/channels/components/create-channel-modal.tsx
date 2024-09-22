@@ -7,11 +7,14 @@ import {
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { useWorkspaceId } from '@/hooks/use-workspace-id';
+import { useRouter } from 'next/navigation';
 import { useState } from 'react';
+import { toast } from 'sonner';
 import { useCreateChannel } from '../api/use-create-channel';
 import { useCreateChannelModal } from '../store/use-create-channel-modal';
 
 function CreateChannelModal() {
+  const router = useRouter();
   const { isPending, mutate } = useCreateChannel();
   const workspaceId = useWorkspaceId();
 
@@ -35,11 +38,13 @@ function CreateChannelModal() {
     mutate(
       { name, workspaceId },
       {
-        // eslint-disable-next-line
         onSuccess: id => {
-          // TODO: do something with id
-
+          toast.success('Channel created!');
+          router.push(`/workspace/${workspaceId}/channel/${id}`);
           handleClose();
+        },
+        onError: () => {
+          toast.error('Failed to create channel');
         },
       },
     );
