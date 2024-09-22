@@ -1,16 +1,16 @@
 'use client';
 
-import React, { useState } from 'react';
-import { AlertOctagon } from 'lucide-react';
-import { Button } from '../components/ui/button';
 import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogFooter,
-  DialogTitle,
-} from '../components/ui/dialog';
+  AlertDialog,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
+import { Button } from '@/components/ui/button';
+import { AlertOctagon } from 'lucide-react';
+import { useState } from 'react';
 
 export const useConfirm = (
   title: string,
@@ -41,27 +41,27 @@ export const useConfirm = (
 
   function ConfirmationDialog() {
     return (
-      <Dialog open={promise !== null}>
-        <DialogContent className="w-fit max-w-fit text-rose-600">
-          <DialogHeader>
-            <DialogTitle className="flex gap-2 items-center">
+      <AlertDialog open={promise !== null}>
+        <AlertDialogContent className="w-fit max-w-fit text-rose-600">
+          <AlertDialogHeader>
+            <AlertDialogTitle className="flex gap-2 items-center">
               <AlertOctagon className="size-8" />
               {title}
-            </DialogTitle>
-            <DialogDescription className="text-sm text-rose-600">
+            </AlertDialogTitle>
+            <AlertDialogDescription className="text-sm text-rose-600">
               {message}
-            </DialogDescription>
-          </DialogHeader>
-          <DialogFooter className="pt-2">
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter className="pt-2">
             <Button variant="secondary" onClick={handleCancel}>
               Cancel
             </Button>
             <Button onClick={handleConfirm} variant="destructive">
               Continue
             </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     );
   }
 
