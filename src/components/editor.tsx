@@ -25,7 +25,7 @@ type EditorValue = {
 
 interface EditorProps {
   variant?: 'create' | 'update';
-  onSubmit?: ({ image, body }: EditorValue) => void;
+  onSubmit: ({ image, body }: EditorValue) => void;
   onCancel?: () => void;
   placeholder?: string;
   disabled?: boolean;
@@ -86,7 +86,22 @@ function Editor({
           bindings: {
             enter: {
               key: 'Enter',
-              handler: () => false,
+              handler: () => {
+                // eslint-disable-next-line
+                const currentText = quill.getText();
+                const addedImage = imageElementRef.current?.files?.[0] || null;
+
+                const isEmpty =
+                  !addedImage &&
+                  currentText.replace(/<(.|\n)*?>/g, '').trim().length === 0;
+
+                if (isEmpty) return;
+
+                // eslint-disable-next-line
+                const body = JSON.stringify(quill.getContents());
+
+                submitRef.current?.({ image: addedImage, body });
+              },
             },
             shift_enter: {
               key: 'Shift+Enter',
@@ -140,7 +155,7 @@ function Editor({
     );
   };
 
-  const isEmpty = text.replace(/<(.|\n)*?>/g, '').trim().length === 0;
+  const isEmpty = !image && text.replace(/<(.|\n)*?>/g, '').trim().length === 0;
 
   const toggleToolbar = () => {
     setIsToolbarVisible(prev => !prev);
@@ -161,7 +176,12 @@ function Editor({
         className="hidden"
         onChange={e => setImage(e.target.files![0])}
       />
-      <div className="flex flex-col border border-slate-200 rounded-md overflow-hidden focus-within:border-slate-300 focus-within:shadow-sm transition bg-white">
+      <div
+        className={cn(
+          'flex flex-col border border-slate-200 rounded-md overflow-hidden focus-within:border-slate-300 focus-within:shadow-sm transition bg-white',
+          disabled ? 'cursor-not-allowed opacity-50' : 'cursor-text',
+        )}
+      >
         <div className="h-full ql-custom" ref={containerRef} />
         {!!image && (
           <div className="p-2 ">
@@ -228,7 +248,12 @@ function Editor({
               </Button>
               <Button
                 disabled={disabled || isEmpty}
-                onClick={() => {}}
+                onClick={() => {
+                  onSubmit({
+                    body: JSON.stringify(quillRef.current?.getContents()),
+                    image,
+                  });
+                }}
                 size="sm"
                 className="bg-[#007a5a] hover:bg-[#007a5a] text-white"
               >
@@ -239,7 +264,14 @@ function Editor({
           {variant === 'create' && (
             <Button
               disabled={disabled || isEmpty}
-              onClick={() => {}}
+              onClick={() => {
+                onSubmit({
+                  body: JSON.stringify(quillRef.current?.getContents()),
+                  image,
+                });
+
+                quillRef.current?.setContents([]);
+              }}
               size="iconSm"
               className={cn(
                 'ml-auto',
