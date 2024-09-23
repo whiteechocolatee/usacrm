@@ -2,6 +2,7 @@
 
 import { useRemoveMessage } from '@/features/messages/api/use-remove-message';
 import { useUpdateMessage } from '@/features/messages/api/use-update-message';
+import { useToggleReaction } from '@/features/reactions/api/use-create-reactions';
 import { useConfirm } from '@/hooks/use-confirm';
 import { cn } from '@/lib/utils';
 import { format, isToday, isYesterday } from 'date-fns';
@@ -9,6 +10,7 @@ import dynamic from 'next/dynamic';
 import { toast } from 'sonner';
 import { Doc, Id } from '../../convex/_generated/dataModel';
 import Hint from './hint';
+import Reactions from './reactions';
 import Thumbnail from './thumbnail';
 import Toolbar from './toolbar';
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
@@ -73,6 +75,8 @@ function Message({
     useUpdateMessage();
   const { mutate: removeMessage, isPending: isRemovingMessage } =
     useRemoveMessage();
+  const { mutate: toggleReaction, isPending: isTogglingReaction } =
+    useToggleReaction();
 
   const isPending = isUpdatingMessage;
 
@@ -106,6 +110,17 @@ function Message({
         },
         onError: () => {
           toast.error('Failed to delete message');
+        },
+      },
+    );
+  };
+
+  const handleReaction = (value: string) => {
+    toggleReaction(
+      { messageId: id!, value },
+      {
+        onError: () => {
+          toast.error('Failed to add reaction');
         },
       },
     );
@@ -148,6 +163,7 @@ function Message({
               {updatedAt ? (
                 <span className="text-xs text-muted-foreground">(edited)</span>
               ) : null}
+              <Reactions data={reactions || []} onChange={handleReaction} />
             </div>
           )}
         </div>
@@ -156,7 +172,7 @@ function Message({
             isAuthor={isAuthor}
             isPending={false}
             handleEdit={() => setEditingId(id!)}
-            handleReaction={() => {}}
+            handleReaction={handleReaction}
             handleThread={() => {}}
             handleDelete={handleRemove}
             hideThreadButton={hideThreadButton}
@@ -222,6 +238,7 @@ function Message({
             {updatedAt ? (
               <span className="text-xs text-muted-foreground">(edited)</span>
             ) : null}
+            <Reactions data={reactions || []} onChange={handleReaction} />
           </div>
         )}
       </div>
@@ -230,7 +247,7 @@ function Message({
           isAuthor={isAuthor}
           isPending={false}
           handleEdit={() => setEditingId(id!)}
-          handleReaction={() => {}}
+          handleReaction={handleReaction}
           handleThread={() => {}}
           handleDelete={handleRemove}
           hideThreadButton={hideThreadButton}
