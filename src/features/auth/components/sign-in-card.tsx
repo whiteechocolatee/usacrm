@@ -22,8 +22,8 @@ type SignInProps = {
 
 export function SignInCard({ setState }: SignInProps) {
   const { signIn } = useAuthActions();
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState('test10@gmail.com');
+  const [password, setPassword] = useState('Kh21!asdfg2');
   const [error, setError] = useState('');
   const [pending, setPending] = useState(false);
 
