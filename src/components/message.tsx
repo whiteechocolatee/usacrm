@@ -15,6 +15,7 @@ import Reactions from './reactions';
 import Thumbnail from './thumbnail';
 import Toolbar from './toolbar';
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
+import ThreadBar from './thread-bar';
 
 interface MessageProps {
   id?: Id<'messages'>;
@@ -39,6 +40,7 @@ interface MessageProps {
   threadCount?: number;
   threadImage?: string;
   threadTimestamp?: number;
+  threadName?: string;
 }
 
 const formatFullTime = (date: Date) =>
@@ -66,6 +68,7 @@ function Message({
   threadImage,
   threadTimestamp,
   isCompact,
+  threadName,
 }: MessageProps) {
   const { parentMessageId, onOpenMessage, onClose } = usePanel();
 
@@ -169,6 +172,13 @@ function Message({
                 <span className="text-xs text-muted-foreground">(edited)</span>
               ) : null}
               <Reactions data={reactions || []} onChange={handleReaction} />
+              <ThreadBar
+                count={threadCount}
+                image={threadImage}
+                timestamp={threadTimestamp}
+                onClick={() => onOpenMessage(id!)}
+                name={threadName}
+              />
             </div>
           )}
         </div>
@@ -244,6 +254,13 @@ function Message({
               <span className="text-xs text-muted-foreground">(edited)</span>
             ) : null}
             <Reactions data={reactions || []} onChange={handleReaction} />
+            <ThreadBar
+              count={threadCount}
+              image={threadImage}
+              timestamp={threadTimestamp}
+              onClick={() => onOpenMessage(id!)}
+              name={threadName}
+            />
           </div>
         )}
       </div>
