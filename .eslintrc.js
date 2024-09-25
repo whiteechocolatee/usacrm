@@ -17,7 +17,10 @@ module.exports = {
   rules: {
     'import/no-extraneous-dependencies': ['off'],
     'react/jsx-props-no-spreading': 'warn',
-    'no-underscore-dangle': ['error', { allow: ['_id', '_open'] }],
+    'no-underscore-dangle': [
+      'error',
+      { allow: ['_id', '_open', '_creationTime'] },
+    ],
     'no-param-reassign': 'off',
     'react/require-default-props': 'warn',
     'no-console': 'error',
