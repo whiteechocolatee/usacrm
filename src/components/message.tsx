@@ -2,16 +2,20 @@
 
 import { useRemoveMessage } from '@/features/messages/api/use-remove-message';
 import { useUpdateMessage } from '@/features/messages/api/use-update-message';
+import { useToggleReaction } from '@/features/reactions/api/use-create-reactions';
 import { useConfirm } from '@/hooks/use-confirm';
+import { usePanel } from '@/hooks/use-panel';
 import { cn } from '@/lib/utils';
 import { format, isToday, isYesterday } from 'date-fns';
 import dynamic from 'next/dynamic';
 import { toast } from 'sonner';
 import { Doc, Id } from '../../convex/_generated/dataModel';
 import Hint from './hint';
+import Reactions from './reactions';
 import Thumbnail from './thumbnail';
 import Toolbar from './toolbar';
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
+import ThreadBar from './thread-bar';
 
 interface MessageProps {
   id?: Id<'messages'>;
@@ -36,6 +40,7 @@ interface MessageProps {
   threadCount?: number;
   threadImage?: string;
   threadTimestamp?: number;
+  threadName?: string;
 }
 
 const formatFullTime = (date: Date) =>
@@ -63,7 +68,10 @@ function Message({
   threadImage,
   threadTimestamp,
   isCompact,
+  threadName,
 }: MessageProps) {
+  const { parentMessageId, onOpenMessage, onClose } = usePanel();
+
   const [ConfirmationDialog, confirm] = useConfirm(
     'Are you absolutely sure?',
     'This action cannot be undone. This will permanently delete the message from our servers.',
@@ -73,6 +81,8 @@ function Message({
     useUpdateMessage();
   const { mutate: removeMessage, isPending: isRemovingMessage } =
     useRemoveMessage();
+  const { mutate: toggleReaction, isPending: isTogglingReaction } =
+    useToggleReaction();
 
   const isPending = isUpdatingMessage;
 
@@ -102,10 +112,23 @@ function Message({
         onSuccess: () => {
           toast.success('Message deleted successfully!');
 
-          // TODO: close thread if opened
+          if (parentMessageId === id) {
+            onClose();
+          }
         },
         onError: () => {
           toast.error('Failed to delete message');
+        },
+      },
+    );
+  };
+
+  const handleReaction = (value: string) => {
+    toggleReaction(
+      { messageId: id!, value },
+      {
+        onError: () => {
+          toast.error('Failed to add reaction');
         },
       },
     );
@@ -148,6 +171,14 @@ function Message({
               {updatedAt ? (
                 <span className="text-xs text-muted-foreground">(edited)</span>
               ) : null}
+              <Reactions data={reactions || []} onChange={handleReaction} />
+              <ThreadBar
+                count={threadCount}
+                image={threadImage}
+                timestamp={threadTimestamp}
+                onClick={() => onOpenMessage(id!)}
+                name={threadName}
+              />
             </div>
           )}
         </div>
@@ -156,8 +187,8 @@ function Message({
             isAuthor={isAuthor}
             isPending={false}
             handleEdit={() => setEditingId(id!)}
-            handleReaction={() => {}}
-            handleThread={() => {}}
+            handleReaction={handleReaction}
+            handleThread={() => onOpenMessage(id!)}
             handleDelete={handleRemove}
             hideThreadButton={hideThreadButton}
           />
@@ -222,6 +253,14 @@ function Message({
             {updatedAt ? (
               <span className="text-xs text-muted-foreground">(edited)</span>
             ) : null}
+            <Reactions data={reactions || []} onChange={handleReaction} />
+            <ThreadBar
+              count={threadCount}
+              image={threadImage}
+              timestamp={threadTimestamp}
+              onClick={() => onOpenMessage(id!)}
+              name={threadName}
+            />
           </div>
         )}
       </div>
@@ -230,8 +269,8 @@ function Message({
           isAuthor={isAuthor}
           isPending={false}
           handleEdit={() => setEditingId(id!)}
-          handleReaction={() => {}}
-          handleThread={() => {}}
+          handleReaction={handleReaction}
+          handleThread={() => onOpenMessage(id!)}
           handleDelete={handleRemove}
           hideThreadButton={hideThreadButton}
         />

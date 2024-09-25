@@ -1,15 +1,17 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 
 import { useCurrentMember } from '@/features/members/api/use-current-member';
-import { GetMessagesReturnType } from '@/features/messages/api/use-get-message';
+import { GetMessagesReturnType } from '@/features/messages/api/use-get-messages';
 import { useWorkspaceId } from '@/hooks/use-workspace-id';
 import { differenceInMinutes, format, isToday, isYesterday } from 'date-fns';
+import { Loader } from 'lucide-react';
 import { useState } from 'react';
 import { Id } from '../../convex/_generated/dataModel';
 import ChannelHero from './channel-hero';
 import Message from './message';
+import ConversationHero from './conversation-hero';
 
-const TIME_THRESHOLD = 5;
+export const TIME_THRESHOLD = 5;
 
 interface MessageListProps {
   memberName?: string;
@@ -101,7 +103,6 @@ function MessageList({
                 authorImage={message?.user?.image}
                 authorName={message?.user?.name}
                 isAuthor={message?.memberId === currentMember?._id}
-                // @ts-expect-error: message.reactions may be undefined
                 reactions={message?.reactions}
                 body={message?.body || ''}
                 isEditing={editingId === message?._id}
@@ -115,13 +116,50 @@ function MessageList({
                 threadCount={message?.threadCount}
                 threadImage={message?.threadImage}
                 threadTimestamp={message?.threadTimestamp}
+                threadName={message?.threadName}
               />
             );
           })}
         </div>
       ))}
+
+      {loadMore && canLoadMore && (
+        <div
+          className="h-1"
+          // eslint-disable-next-line
+          ref={el => {
+            if (el) {
+              const observer = new IntersectionObserver(
+                ([entry]) => {
+                  if (entry.isIntersecting && canLoadMore) {
+                    loadMore();
+                  }
+                },
+                {
+                  threshold: 1.0,
+                },
+              );
+
+              observer.observe(el);
+
+              return () => observer.disconnect();
+            }
+          }}
+        />
+      )}
+      {isLoadingMore && (
+        <div className="text-center my-2 relative">
+          <hr className="absolute top-3.5 left-0 right-0 border-t border-gray-300" />
+          <span className="relative inline-block bg-white px-4 py-1 rounded-full text-xs border border-gray-300 shadow-sm">
+            <Loader className="w-4 h-4 animate-spin" />
+          </span>
+        </div>
+      )}
       {variant === 'channel' && channelName && channelCreationTime && (
         <ChannelHero name={channelName} creationTime={channelCreationTime} />
+      )}
+      {variant === 'conversation' && memberName && (
+        <ConversationHero name={memberName} image={memberImage} />
       )}
     </div>
   );
