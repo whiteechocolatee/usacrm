@@ -4,6 +4,7 @@ import { useRemoveMessage } from '@/features/messages/api/use-remove-message';
 import { useUpdateMessage } from '@/features/messages/api/use-update-message';
 import { useToggleReaction } from '@/features/reactions/api/use-create-reactions';
 import { useConfirm } from '@/hooks/use-confirm';
+import { usePanel } from '@/hooks/use-panel';
 import { cn } from '@/lib/utils';
 import { format, isToday, isYesterday } from 'date-fns';
 import dynamic from 'next/dynamic';
@@ -66,6 +67,8 @@ function Message({
   threadTimestamp,
   isCompact,
 }: MessageProps) {
+  const { parentMessageId, onOpenMessage, onClose } = usePanel();
+
   const [ConfirmationDialog, confirm] = useConfirm(
     'Are you absolutely sure?',
     'This action cannot be undone. This will permanently delete the message from our servers.',
@@ -106,7 +109,9 @@ function Message({
         onSuccess: () => {
           toast.success('Message deleted successfully!');
 
-          // TODO: close thread if opened
+          if (parentMessageId === id) {
+            onClose();
+          }
         },
         onError: () => {
           toast.error('Failed to delete message');
@@ -173,7 +178,7 @@ function Message({
             isPending={false}
             handleEdit={() => setEditingId(id!)}
             handleReaction={handleReaction}
-            handleThread={() => {}}
+            handleThread={() => onOpenMessage(id!)}
             handleDelete={handleRemove}
             hideThreadButton={hideThreadButton}
           />
@@ -248,7 +253,7 @@ function Message({
           isPending={false}
           handleEdit={() => setEditingId(id!)}
           handleReaction={handleReaction}
-          handleThread={() => {}}
+          handleThread={() => onOpenMessage(id!)}
           handleDelete={handleRemove}
           hideThreadButton={hideThreadButton}
         />
