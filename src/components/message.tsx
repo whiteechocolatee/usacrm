@@ -70,7 +70,7 @@ function Message({
   isCompact,
   threadName,
 }: MessageProps) {
-  const { parentMessageId, onOpenMessage, onClose } = usePanel();
+  const { parentMessageId, onOpenMessage, onOpenProfile, onClose } = usePanel();
 
   const [ConfirmationDialog, confirm] = useConfirm(
     'Are you absolutely sure?',
@@ -84,7 +84,7 @@ function Message({
   const { mutate: toggleReaction, isPending: isTogglingReaction } =
     useToggleReaction();
 
-  const isPending = isUpdatingMessage;
+  const isPending = isUpdatingMessage || isTogglingReaction;
 
   const handleUpdate = ({ body: newBody }: { body: string }) => {
     updateMessage(
@@ -210,7 +210,7 @@ function Message({
     >
       <ConfirmationDialog />
       <div className="flex items-start gap-2">
-        <button type="button">
+        <button type="button" onClick={() => onOpenProfile(memberId!)}>
           <Avatar>
             <AvatarImage className="rounded-md" src={authorImage} />
             <AvatarFallback className="rounded-md bg-sky-500 text-white">
@@ -232,7 +232,7 @@ function Message({
           <div className="flex flex-col w-full overflow-hidden">
             <div className="text-sm">
               <button
-                onClick={() => {}}
+                onClick={() => onOpenProfile(memberId!)}
                 type="button"
                 className="font-bold text-primary hover:underline"
               >
