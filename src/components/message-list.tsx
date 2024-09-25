@@ -9,6 +9,7 @@ import { useState } from 'react';
 import { Id } from '../../convex/_generated/dataModel';
 import ChannelHero from './channel-hero';
 import Message from './message';
+import ConversationHero from './conversation-hero';
 
 export const TIME_THRESHOLD = 5;
 
@@ -115,6 +116,7 @@ function MessageList({
                 threadCount={message?.threadCount}
                 threadImage={message?.threadImage}
                 threadTimestamp={message?.threadTimestamp}
+                threadName={message?.threadName}
               />
             );
           })}
@@ -155,6 +157,9 @@ function MessageList({
       )}
       {variant === 'channel' && channelName && channelCreationTime && (
         <ChannelHero name={channelName} creationTime={channelCreationTime} />
+      )}
+      {variant === 'conversation' && memberName && (
+        <ConversationHero name={memberName} image={memberImage} />
       )}
     </div>
   );
