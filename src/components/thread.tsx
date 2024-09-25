@@ -233,6 +233,7 @@ function Thread({ messageId, onClose }: Props) {
                   threadCount={threadMessage?.threadCount}
                   threadImage={threadMessage?.threadImage}
                   threadTimestamp={threadMessage?.threadTimestamp}
+                  threadName={threadMessage?.threadName}
                 />
               );
             })}
