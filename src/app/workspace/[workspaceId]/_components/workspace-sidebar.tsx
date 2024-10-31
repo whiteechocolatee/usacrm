@@ -1,26 +1,17 @@
 import { useGetChannels } from '@/features/channels/api/use-get-channels';
 import { useGetMembers } from '@/features/channels/api/use-get-members';
-import { useCreateChannelModal } from '@/features/channels/store/use-create-channel-modal';
 import { useCurrentMember } from '@/features/members/api/use-current-member';
 import { useGetWorkspace } from '@/features/workspaces/api/use-get-workspaces-by-id';
 import { useChannelId } from '@/hooks/use-channel-id';
 import { useMemberId } from '@/hooks/use-member-id';
 import { useWorkspaceId } from '@/hooks/use-workspace-id';
-import {
-  AlertTriangle,
-  HashIcon,
-  Loader,
-  MessageSquareText,
-  SendHorizontal,
-} from 'lucide-react';
+import { AlertTriangle, HashIcon, Loader } from 'lucide-react';
 import SidebarItem from './sidebar-item';
 import UserItem from './user-item';
 import WorkspaceHeader from './workspace-header';
 import WorkspaceSection from './workspace-section';
 
 function WorkspaceSidebar() {
-  // eslint-disable-next-line
-  const [_open, setOpen] = useCreateChannelModal();
   const workspaceId = useWorkspaceId();
   const channelId = useChannelId();
   const memberId = useMemberId();
@@ -40,7 +31,7 @@ function WorkspaceSidebar() {
 
   if (memberIsLoading || workspaceIsLoading) {
     return (
-      <div className="flex flex-col bg-[#5e2c5f] h-full items-center justify-center">
+      <div className="flex flex-col bg-custom-blue h-full items-center justify-center">
         <Loader className="size-5 animate-spin shrink-0 text-white" />
       </div>
     );
@@ -48,7 +39,7 @@ function WorkspaceSidebar() {
 
   if (!member || !workspace) {
     return (
-      <div className="flex flex-col gap-y-2 bg-[#5e2c5f] h-full items-center justify-center">
+      <div className="flex flex-col gap-y-2 bg-custom-blue h-full items-center justify-center">
         <AlertTriangle className="size-5 shrink-0 " />
         <p className="text-white text-sm">Something went wrong</p>
       </div>
@@ -56,20 +47,12 @@ function WorkspaceSidebar() {
   }
 
   return (
-    <div className="flex flex-col bg-[#5e2c5f] h-full">
+    <div className="flex flex-col bg-custom-blue h-full">
       <WorkspaceHeader
         isAdmin={member.role === 'admin'}
         workspace={workspace}
       />
-      <div className="flex flex-col px-2 mt-3">
-        <SidebarItem label="Threads" id="threads" icon={MessageSquareText} />
-        <SidebarItem label="Drafts & Sent" id="threads" icon={SendHorizontal} />
-      </div>
-      <WorkspaceSection
-        label="Channels"
-        hint="New Channel"
-        onNew={member.role === 'admin' ? () => setOpen(true) : undefined}
-      >
+      <WorkspaceSection label="Projects" hint="New Channel" onNew={undefined}>
         {channelsIsLoading ? (
           <Loader className="size-5 shrink-0 text-white" />
         ) : (

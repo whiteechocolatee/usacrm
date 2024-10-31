@@ -10,8 +10,8 @@ import './globals.css';
 const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
-  title: 'USA CRM',
-  description: 'crm for us',
+  title: 'Slack',
+  description: 'slack',
 };
 
 export default function RootLayout({
