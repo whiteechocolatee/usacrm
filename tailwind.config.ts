@@ -19,6 +19,7 @@ const config = {
     },
     extend: {
       colors: {
+        'custom-blue': '#3D5891',
         border: 'hsl(var(--border))',
         input: 'hsl(var(--input))',
         ring: 'hsl(var(--ring))',

@@ -48,7 +48,7 @@ function Toolbar() {
   };
 
   return (
-    <nav className="bg-[#481349] flex w-full items-center justify-between h-10 p-1.5">
+    <nav className="bg-custom-blue flex w-full items-center justify-between h-10 p-1.5">
       <div className="flex-1" />
       <div className="min-w-[280px] max-w-[642px] grow-[2] shrink">
         <Button

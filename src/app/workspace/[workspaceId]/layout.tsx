@@ -9,6 +9,7 @@ import {
 import Profile from '@/features/members/components/profile';
 import { usePanel } from '@/hooks/use-panel';
 import { Loader } from 'lucide-react';
+import Image from 'next/image';
 import React from 'react';
 import { Id } from '../../../../convex/_generated/dataModel';
 import Sidebar from './_components/sidebar';
@@ -25,7 +26,7 @@ function WorkspaceIdLayout({ children }: WorkspaceIdLayoutProps) {
   const showPanel = !!parentMessageId || !!profileMemberId;
 
   return (
-    <div className="h-full ">
+    <div className="h-full">
       <Toolbar />
       <div className="flex h-[calc(100vh-40px)]">
         <Sidebar />
@@ -36,13 +37,20 @@ function WorkspaceIdLayout({ children }: WorkspaceIdLayoutProps) {
           <ResizablePanel
             defaultSize={20}
             minSize={11}
-            className="bg-[#5e2c5f]"
+            className="bg-custom-blue"
           >
             <WorkspaceSidebar />
           </ResizablePanel>
           <ResizableHandle withHandle />
-          <ResizablePanel minSize={20} defaultSize={80}>
-            {children}
+          <ResizablePanel className="relative" minSize={20} defaultSize={80}>
+            <Image
+              src="/bordered.png"
+              width={16}
+              height={16}
+              className="size-4 absolute top-0 left-0"
+              alt="logo"
+            />
+            <div className="p-2">{children}</div>
           </ResizablePanel>
           {showPanel && (
             <>
