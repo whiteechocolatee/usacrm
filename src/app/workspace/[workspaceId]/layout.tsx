@@ -50,7 +50,7 @@ function WorkspaceIdLayout({ children }: WorkspaceIdLayoutProps) {
               className="size-4 absolute top-0 left-0"
               alt="logo"
             />
-            <div className="p-2">{children}</div>
+            <div className="pt-2 h-full">{children}</div>
           </ResizablePanel>
           {showPanel && (
             <>
