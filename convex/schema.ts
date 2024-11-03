@@ -1,6 +1,10 @@
 import { defineSchema, defineTable } from 'convex/server';
 import { authTables } from '@convex-dev/auth/server';
 import { v } from 'convex/values';
+import {
+  ProjectImportance,
+  ProjectStatus,
+} from '../src/features/projects/types';
 
 const schema = defineSchema({
   ...authTables,
@@ -58,15 +62,23 @@ const schema = defineSchema({
   projects: defineTable({
     name: v.string(),
     workspaceId: v.id('workspaces'),
-    projectId: v.number(),
     description: v.optional(v.string()),
+    caseId: v.string(),
     category: v.optional(v.string()),
     dueDate: v.number(),
-    status: v.union(v.literal('active'), v.literal('closed')),
-    importance: v.optional(
-      v.union(v.literal('low'), v.literal('medium'), v.literal('high')),
+    status: v.union(
+      v.literal(ProjectStatus.FILED_IN_COURT),
+      v.literal(ProjectStatus.IN_REVIEW),
+      v.literal(ProjectStatus.DONE),
     ),
-  }),
+    importance: v.optional(
+      v.union(
+        v.literal(ProjectImportance.LOW),
+        v.literal(ProjectImportance.MEDIUM),
+        v.literal(ProjectImportance.HIGH),
+      ),
+    ),
+  }).index('by_workspace_id', ['workspaceId']),
   events: defineTable({
     name: v.string(),
     workspaceId: v.id('workspaces'),

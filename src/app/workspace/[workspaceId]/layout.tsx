@@ -37,6 +37,7 @@ function WorkspaceIdLayout({ children }: WorkspaceIdLayoutProps) {
           <ResizablePanel
             defaultSize={20}
             minSize={11}
+            maxSize={17}
             className="bg-custom-blue"
           >
             <WorkspaceSidebar />

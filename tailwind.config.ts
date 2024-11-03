@@ -19,8 +19,12 @@ const config = {
     },
     extend: {
       colors: {
+        'custom-orange': '#F5BD78',
+        'custom-green': '#71C1AD',
+        'custom-red': '#E78175',
         'custom-blue': '#3D5891',
-        buttonBlue: '#a2c4ef',
+        'custom-light-blue': '#a2c4ef',
+        'custom-grey': '#858993',
         border: 'hsl(var(--border))',
         input: 'hsl(var(--input))',
         ring: 'hsl(var(--ring))',
