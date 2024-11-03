@@ -1,6 +1,7 @@
 import UserButton from '@/features/auth/components/user-button';
 import {
   Bell,
+  CalendarDays,
   ChartPie,
   FolderKanban,
   Home,
@@ -29,7 +30,7 @@ function Sidebar() {
         href="/projects"
       />
       <SidebarButton
-        icon={Bell}
+        icon={CalendarDays}
         label="Calendar"
         isActive={isActive}
         href="/calendar"
