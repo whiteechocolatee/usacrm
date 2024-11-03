@@ -8,6 +8,10 @@ body,
   height: 100%;
 }
 
+body {
+  background: #f5f9ff;
+}
+
 @layer base {
   :root {
     --background: 0 0% 100%;

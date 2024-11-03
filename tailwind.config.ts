@@ -20,6 +20,7 @@ const config = {
     extend: {
       colors: {
         'custom-blue': '#3D5891',
+        buttonBlue: '#a2c4ef',
         border: 'hsl(var(--border))',
         input: 'hsl(var(--input))',
         ring: 'hsl(var(--ring))',
@@ -72,6 +73,9 @@ const config = {
       animation: {
         'accordion-down': 'accordion-down 0.2s ease-out',
         'accordion-up': 'accordion-up 0.2s ease-out',
+      },
+      boxShadow: {
+        custom: '0 6px 12px 0 rgba(63, 140, 255, 0.26)',
       },
     },
   },

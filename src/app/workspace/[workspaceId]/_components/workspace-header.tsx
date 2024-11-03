@@ -1,4 +1,3 @@
-import Hint from '@/components/hint';
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
@@ -7,11 +6,11 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { ChevronDown, SquarePen } from 'lucide-react';
+import { ChevronDown } from 'lucide-react';
 import { useState } from 'react';
 import { Doc } from '../../../../../convex/_generated/dataModel';
-import PreferencesModal from './prefreneces-modal';
 import InviteModal from './invite-modal';
+import PreferencesModal from './prefreneces-modal';
 
 type WorkspaceHeaderProps = {
   workspace: Doc<'workspaces'>;
@@ -80,13 +79,13 @@ function WorkspaceHeader({ workspace, isAdmin }: WorkspaceHeaderProps) {
             )}
           </DropdownMenuContent>
         </DropdownMenu>
-        <div className="flex items-center gap-0.5">
+        {/* <div className="flex items-center gap-0.5">
           <Hint label="New message" side="bottom">
             <Button variant="transparent" size="iconSm">
               <SquarePen className="size-4" />
             </Button>
           </Hint>
-        </div>
+        </div> */}
       </div>
     </>
   );
