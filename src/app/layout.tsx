@@ -10,8 +10,7 @@ import './globals.css';
 const nunito = Nunito_Sans({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
-  title: 'Slack',
-  description: 'slack',
+  title: 'Astrum Law Firm 1',
 };
 
 export default function RootLayout({

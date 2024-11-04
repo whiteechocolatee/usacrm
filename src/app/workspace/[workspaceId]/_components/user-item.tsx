@@ -12,6 +12,7 @@ const userItemVariants = cva(
     variants: {
       variant: {
         default: 'text-[#f9edffcc]',
+        project: 'text-black',
         active: 'text-[#481349] bg-white/90 hover:bg-white/90',
       },
     },
@@ -26,21 +27,30 @@ type UserItemProps = {
   label?: string;
   image?: string;
   variant?: VariantProps<typeof userItemVariants>['variant'];
+  avatarClassName?: string;
+  wrapperClassName?: string;
 };
 
-function UserItem({ id, label = 'Member', image, variant }: UserItemProps) {
+function UserItem({
+  id,
+  label = 'Member',
+  image,
+  variant,
+  avatarClassName,
+  wrapperClassName,
+}: UserItemProps) {
   const workspaceId = useWorkspaceId();
   const avatarFallback = label.charAt(0).toUpperCase();
 
   return (
     <Button
       variant="transparent"
-      className={cn(userItemVariants({ variant }))}
+      className={cn(userItemVariants({ variant }), wrapperClassName)}
       size="sm"
       asChild
     >
       <Link href={`/workspace/${workspaceId}/member/${id}`}>
-        <Avatar className="size-5 rounded-md mr-1">
+        <Avatar className={cn('size-5 rounded-md mr-1', avatarClassName)}>
           <AvatarImage className="rounded-md" src={image} />
           <AvatarFallback className="rounded-md bg-sky-500 text-white">
             {avatarFallback}

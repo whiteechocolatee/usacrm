@@ -9,7 +9,7 @@ import {
   CommandSeparator,
 } from '@/components/ui/command';
 import { useGetChannels } from '@/features/channels/api/use-get-channels';
-import { useGetMembers } from '@/features/channels/api/use-get-members';
+import { useGetMembers } from '@/features/members/api/use-get-members';
 import { useGetWorkspace } from '@/features/workspaces/api/use-get-workspaces-by-id';
 import { useWorkspaceId } from '@/hooks/use-workspace-id';
 import { Info, Search } from 'lucide-react';
@@ -57,7 +57,7 @@ function Toolbar() {
           className="bg-accent/25 hover:bg-accent/25 w-full justify-start h-7 px-2"
         >
           <Search className="size-4 text-white mr-2" />
-          <span className="text-white text-xs">Search in #{data?.name}</span>
+          <span className="text-white text-xs">Search in {data?.name}</span>
         </Button>
         <CommandDialog open={open} onOpenChange={setOpen}>
           <CommandInput placeholder="Type a command or search..." />

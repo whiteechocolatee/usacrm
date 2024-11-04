@@ -1,5 +1,5 @@
 import { useGetChannels } from '@/features/channels/api/use-get-channels';
-import { useGetMembers } from '@/features/channels/api/use-get-members';
+import { useGetMembers } from '@/features/members/api/use-get-members';
 import { useCurrentMember } from '@/features/members/api/use-current-member';
 import { useGetWorkspace } from '@/features/workspaces/api/use-get-workspaces-by-id';
 import { useChannelId } from '@/hooks/use-channel-id';
