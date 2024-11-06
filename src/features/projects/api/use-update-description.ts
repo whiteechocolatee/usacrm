@@ -5,10 +5,8 @@ import { Id } from '../../../../convex/_generated/dataModel';
 
 type RequestType = {
   id: Id<'projects'>;
-  workspaceId: Id<'workspaces'>;
-  assignees: Id<'users'>[];
+  description: string;
 };
-
 type ResponseType = Id<'projects'> | null;
 
 type Options = {
@@ -18,7 +16,7 @@ type Options = {
   throwError?: boolean;
 };
 
-export const useSetProjectAssignees = () => {
+export const useUpdateDescription = () => {
   const [data, setData] = useState<ResponseType>(null);
   const [error, setError] = useState<Error | null>(null);
 
@@ -31,7 +29,7 @@ export const useSetProjectAssignees = () => {
   const isSettled = useMemo(() => status === 'settled', [status]);
   const isError = useMemo(() => status === 'error', [status]);
 
-  const mutation = useMutation(api.projects.setAssignees);
+  const mutation = useMutation(api.projects.updateDescription);
 
   const mutate = useCallback(
     async (values: RequestType, options?: Options) => {

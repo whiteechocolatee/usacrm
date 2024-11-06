@@ -79,6 +79,14 @@ const schema = defineSchema({
       ),
     ),
   }).index('by_workspace_id', ['workspaceId']),
+  comments: defineTable({
+    body: v.string(),
+    image: v.optional(v.id('_storage')),
+    memberId: v.id('members'),
+    projectId: v.id('projects'),
+  })
+    .index('by_member_id', ['memberId'])
+    .index('by_project_id', ['projectId']),
   projectParticipants: defineTable({
     projectId: v.id('projects'),
     workspaceId: v.id('workspaces'),

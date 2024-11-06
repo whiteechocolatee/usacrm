@@ -1,13 +1,17 @@
+'use client';
+
 import UserItem from '@/app/workspace/[workspaceId]/_components/user-item';
-import { Button } from '@/components/ui/button';
-import { useProjectId } from '@/hooks/use-project-id';
+import Hint from '@/components/hint';
 import { useSetProjectAssigneeModal } from '@/hooks/use-set-project-assignee-modal';
-import { Loader2 } from 'lucide-react';
-import { LuUserPlus2 } from 'react-icons/lu';
+import { Edit, Loader2 } from 'lucide-react';
+import { Id } from '../../../../convex/_generated/dataModel';
 import { useGetProjectAssignees } from '../api/use-get-assignees';
 
-function ProjectAssignees() {
-  const projectId = useProjectId();
+type ProjectAssigneesProps = {
+  projectId: Id<'projects'>;
+};
+
+function ProjectAssignees({ projectId }: ProjectAssigneesProps) {
   const { open } = useSetProjectAssigneeModal();
 
   const { data: assignees, isLoading: isAssigneesLoading } =
@@ -23,6 +27,15 @@ function ProjectAssignees() {
 
   return (
     <div>
+      <div className="flex items-center justify-between">
+        <p className="text-custom-grey">Assignees:</p>
+        <Hint side="left" label="Edit assignees">
+          <Edit
+            onClick={open}
+            className="size-4 cursor-pointer text-muted-foreground"
+          />
+        </Hint>
+      </div>
       {assignees?.map(assignee => (
         <UserItem
           wrapperClassName="pl-0"
@@ -33,9 +46,6 @@ function ProjectAssignees() {
           id={assignee._id}
         />
       ))}
-      <Button variant="link" onClick={open} className="text-xs p-0">
-        <LuUserPlus2 className="mr-2 size-4" /> Edit
-      </Button>
     </div>
   );
 }

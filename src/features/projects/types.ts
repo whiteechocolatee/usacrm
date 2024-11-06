@@ -1,5 +1,5 @@
 // eslint-disable-next-line
-import { Id } from '../../../convex/_generated/dataModel';
+import { Doc, Id } from '../../../convex/_generated/dataModel';
 
 export enum ProjectStatus {
   IN_REVIEW = 'IN_REVIEW',
@@ -24,3 +24,7 @@ export interface Project {
   workspaceId: Id<'workspaces'>;
   category?: string;
 }
+
+export type CommentWithMember = Doc<'comments'> & {
+  member: Doc<'members'>;
+};

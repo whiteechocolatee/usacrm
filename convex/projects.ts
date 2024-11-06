@@ -263,3 +263,219 @@ export const getAssignees = query({
     return users;
   },
 });
+
+export const updateImportance = mutation({
+  args: {
+    id: v.id('projects'),
+    importance: v.union(
+      v.literal(ProjectImportance.LOW),
+      v.literal(ProjectImportance.MEDIUM),
+      v.literal(ProjectImportance.HIGH),
+    ),
+  },
+  handler: async (ctx, args) => {
+    const userId = await auth.getUserId(ctx);
+
+    if (!userId) {
+      throw new Error('Not signed in');
+    }
+
+    const user = await ctx.db
+      .query('members')
+      .withIndex('by_user_id', q => q.eq('userId', userId))
+      .unique();
+
+    if (!user) {
+      throw new Error('Not found');
+    }
+
+    if (user.role !== 'admin') {
+      throw new Error('Not authorized');
+    }
+
+    const project = await ctx.db.get(args.id);
+
+    if (!project) {
+      throw new Error('Not found');
+    }
+
+    await ctx.db.patch(project._id, {
+      importance: args.importance,
+    });
+
+    return project._id;
+  },
+});
+
+export const updateDeadline = mutation({
+  args: {
+    id: v.id('projects'),
+    dueDate: v.number(),
+  },
+  handler: async (ctx, args) => {
+    const userId = await auth.getUserId(ctx);
+
+    if (!userId) {
+      throw new Error('Not signed in');
+    }
+
+    const user = await ctx.db
+      .query('members')
+      .withIndex('by_user_id', q => q.eq('userId', userId))
+      .unique();
+
+    if (!user) {
+      throw new Error('Not found');
+    }
+
+    if (user.role !== 'admin') {
+      throw new Error('Not authorized');
+    }
+
+    const project = await ctx.db.get(args.id);
+
+    if (!project) {
+      throw new Error('Not found');
+    }
+
+    await ctx.db.patch(project._id, {
+      dueDate: args.dueDate,
+    });
+
+    return project._id;
+  },
+});
+
+export const updateDescription = mutation({
+  args: {
+    id: v.id('projects'),
+    description: v.string(),
+  },
+  handler: async (ctx, args) => {
+    const userId = await auth.getUserId(ctx);
+
+    if (!userId) {
+      throw new Error('Not signed in');
+    }
+
+    const user = await ctx.db
+      .query('members')
+      .withIndex('by_user_id', q => q.eq('userId', userId))
+      .unique();
+
+    if (!user) {
+      throw new Error('Not found');
+    }
+
+    if (user.role !== 'admin') {
+      throw new Error('Not authorized');
+    }
+
+    const project = await ctx.db.get(args.id);
+
+    if (!project) {
+      throw new Error('Not found');
+    }
+
+    await ctx.db.patch(project._id, {
+      description: args.description,
+    });
+
+    return project._id;
+  },
+});
+
+export const createComment = mutation({
+  args: {
+    projectId: v.id('projects'),
+    workspaceId: v.id('workspaces'),
+    body: v.string(),
+    image: v.optional(v.id('_storage')),
+  },
+  handler: async (ctx, args) => {
+    const userId = await auth.getUserId(ctx);
+
+    if (!userId) {
+      throw new Error('Not signed in');
+    }
+
+    const member = await getMember(ctx, args.workspaceId, userId);
+
+    if (!member) {
+      throw new Error('Not authorized');
+    }
+
+    const project = await ctx.db.get(args.projectId);
+
+    if (!project) {
+      throw new Error('Not found');
+    }
+
+    const comment = await ctx.db.insert('comments', {
+      body: args.body,
+      image: args.image,
+      projectId: args.projectId,
+      memberId: member._id,
+    });
+
+    return comment;
+  },
+});
+
+export const getComments = query({
+  args: {
+    projectId: v.id('projects'),
+  },
+  handler: async (ctx, args) => {
+    const userId = await auth.getUserId(ctx);
+
+    if (!userId) {
+      throw new Error('Not signed in');
+    }
+
+    const user = await ctx.db
+      .query('members')
+      .withIndex('by_user_id', q => q.eq('userId', userId))
+      .unique();
+
+    if (!user) {
+      throw new Error('Not found');
+    }
+
+    const comments = await ctx.db
+      .query('comments')
+      .withIndex('by_project_id', q => q.eq('projectId', args.projectId))
+      .collect();
+
+    const populatedComments = await Promise.all(
+      comments.map(async comment => {
+        const member = await ctx.db
+          .query('members')
+          .withIndex('by_id', q => q.eq('_id', comment.memberId))
+          .unique();
+
+        if (!member) {
+          throw new Error('Not found');
+        }
+
+        const image = comment.image
+          ? await ctx.storage.getUrl(comment.image)
+          : undefined;
+
+        const user = await ctx.db
+          .query('users')
+          .withIndex('by_id', q => q.eq('_id', member.userId))
+          .unique();
+
+        return {
+          ...comment,
+          member,
+          user,
+          image,
+        };
+      }),
+    );
+
+    return populatedComments;
+  },
+});

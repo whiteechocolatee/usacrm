@@ -38,7 +38,7 @@ function ProjectsPage() {
   };
 
   return (
-    <div className="h-full max-w-screen-2xl mx-auto px-6 pt-11">
+    <div className="h-full max-w-screen-2xl mx-auto px-6 pt-11 overflow-y-auto">
       <div className="w-full flex items-center gap-x-4 justify-between">
         <h2 className="text-4xl font-bold">Projects</h2>
         <div className="relative max-w-[622px] w-full">

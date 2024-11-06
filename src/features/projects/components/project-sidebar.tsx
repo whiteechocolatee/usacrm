@@ -1,23 +1,26 @@
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { format } from 'date-fns';
 import { Calendar } from 'lucide-react';
+import { Id } from '../../../../convex/_generated/dataModel';
 import { ProjectImportance as ProjectImportanceType } from '../types';
 import ProjectAssignees from './project-assignees';
-import ProjectImportance from './project-importance';
+import ProjectCategory from './project-category';
+import ProjectDeadLine from './project-deadline';
+import ProjectImportanceWrapper from './project-importance-wrapper';
 
 type ProjectSidebarProps = {
-  assignees?: string[];
   importance: ProjectImportanceType;
   dueDate: number;
   createdAt: number;
   category?: string;
+  projectId: Id<'projects'>;
 };
 
 function ProjectSidebar({
-  assignees = [],
   importance,
   dueDate,
   createdAt,
+  projectId,
   category = '',
 }: ProjectSidebarProps) {
   return (
@@ -26,22 +29,13 @@ function ProjectSidebar({
         Project Info
       </CardHeader>
       <CardContent>
-        <div className="flex flex-col gap-y-1">
-          <p className="text-custom-grey">Assignees:</p>
-          <ProjectAssignees assignees={assignees} />
-        </div>
-        <div className="flex items-center gap-x-2 mt-11">
-          <p className="text-custom-grey">Priority:</p>
-          <ProjectImportance fallbackClasses="w-fit" importance={importance} />
-        </div>
-        <div className="mt-8 bg-custom-white flex gap-x-4 items-center rounded-xl py-2 px-4">
-          <p className="text-custom-grey">Category:</p>
-          <p>{category || 'No category'}</p>
-        </div>
-        <div className="flex flex-col gap-y-2 mt-8">
-          <p className="text-custom-grey">Dead Line:</p>
-          <p>{format(new Date(dueDate), 'MMM dd, yyyy')}</p>
-        </div>
+        <ProjectAssignees projectId={projectId} />
+        <ProjectImportanceWrapper
+          projectId={projectId}
+          importance={importance}
+        />
+        <ProjectCategory projectId={projectId} category={category} />
+        <ProjectDeadLine projectId={projectId} dueDate={dueDate} />
         <p className="text-sm mt-20 text-custom-grey font-semibold flex items-center">
           <Calendar className="mr-4 size-6" />
           Created {format(new Date(createdAt), 'MMM dd, yyyy')}
