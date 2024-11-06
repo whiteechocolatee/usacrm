@@ -2,13 +2,12 @@ import { useMutation } from 'convex/react';
 import { useCallback, useMemo, useState } from 'react';
 import { api } from '../../../../convex/_generated/api';
 import { Id } from '../../../../convex/_generated/dataModel';
+import { ProjectImportance } from '../types';
 
 type RequestType = {
   id: Id<'projects'>;
-  workspaceId: Id<'workspaces'>;
-  assignees: Id<'users'>[];
+  importance: ProjectImportance;
 };
-
 type ResponseType = Id<'projects'> | null;
 
 type Options = {
@@ -18,7 +17,7 @@ type Options = {
   throwError?: boolean;
 };
 
-export const useSetProjectAssignees = () => {
+export const useUpdateImportance = () => {
   const [data, setData] = useState<ResponseType>(null);
   const [error, setError] = useState<Error | null>(null);
 
@@ -31,7 +30,7 @@ export const useSetProjectAssignees = () => {
   const isSettled = useMemo(() => status === 'settled', [status]);
   const isError = useMemo(() => status === 'error', [status]);
 
-  const mutation = useMutation(api.projects.setAssignees);
+  const mutation = useMutation(api.projects.updateImportance);
 
   const mutate = useCallback(
     async (values: RequestType, options?: Options) => {

@@ -54,9 +54,7 @@ function WorkspaceIdLayout({ children }: WorkspaceIdLayoutProps) {
             <div className="pt-2 h-full">{children}</div>
           </ResizablePanel>
           {showPanel && (
-            <>
-              <ResizableHandle withHandle />
-              <ResizablePanel minSize={20} defaultSize={29}>
+            <ResizablePanel minSize={20} maxSize={20}>
                 {/* eslint-disable-next-line */}
                 {parentMessageId ? (
                   <Thread
@@ -74,7 +72,6 @@ function WorkspaceIdLayout({ children }: WorkspaceIdLayoutProps) {
                   </div>
                 )}
               </ResizablePanel>
-            </>
           )}
         </ResizablePanelGroup>
       </div>

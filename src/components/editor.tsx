@@ -31,6 +31,7 @@ interface EditorProps {
   disabled?: boolean;
   innerRef?: MutableRefObject<Quill | null>;
   defaultValue?: Delta | Op[];
+  isToolbarVisibleProp?: boolean;
 }
 
 function Editor({
@@ -41,10 +42,12 @@ function Editor({
   defaultValue = [],
   disabled = false,
   innerRef,
+  isToolbarVisibleProp = true,
 }: EditorProps) {
   const [text, setText] = useState('');
   const [image, setImage] = useState<File | null>(null);
-  const [isToolbarVisible, setIsToolbarVisible] = useState(true);
+  const [isToolbarVisible, setIsToolbarVisible] =
+    useState(isToolbarVisibleProp);
 
   const containerRef = useRef<HTMLDivElement>(null);
 
