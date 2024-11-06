@@ -8,6 +8,7 @@ import { Calendar, MoreVertical } from 'lucide-react';
 import Link from 'next/link';
 import { Project } from '../types';
 import ProjectImportance from './project-importance';
+import UserAvatars from './user-avatars';
 
 type ProjectListCardProps = {
   project: Project;
@@ -41,7 +42,9 @@ function ProjectListCard({ project }: ProjectListCardProps) {
         <p>
           <Badge variant="status">{snakeCaseToTitleCase(project.status)}</Badge>
         </p>
-        <p>TODO: Project assigned to</p>
+        <div>
+          <UserAvatars type="list" users={project.assignees} />
+        </div>
         <p>
           <Button size="iconSm" variant="ghost">
             <MoreVertical className="size-6" />

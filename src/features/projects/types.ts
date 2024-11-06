@@ -13,8 +13,17 @@ export enum ProjectImportance {
   HIGH = 'high',
 }
 
+export interface Assignee {
+  _creationTime: number;
+  _id: Id<'projectParticipants'>;
+  email: string;
+  name: string;
+  image?: string;
+}
+
 export interface Project {
   _creationTime: number;
+  assignees?: Assignee[] | undefined;
   _id: Id<'projects'>;
   caseId: string;
   dueDate: number;

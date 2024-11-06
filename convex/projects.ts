@@ -101,7 +101,41 @@ export const get = query({
       .withIndex('by_workspace_id', q => q.eq('workspaceId', args.workspaceId))
       .collect();
 
-    return projects;
+    const populatedProjects = await Promise.all(
+      projects.map(async project => {
+        const assignees = await ctx.db
+          .query('projectParticipants')
+          .withIndex('by_project_id', q => q.eq('projectId', project._id))
+          .collect();
+
+        const members = [];
+
+        for (const assignee of assignees) {
+          const member = await populateMember(ctx, assignee.memberId);
+
+          if (member) {
+            members.push(member);
+          }
+        }
+
+        const users = [];
+
+        for (const member of members) {
+          const user = await populateUser(ctx, member.userId);
+
+          if (user) {
+            users.push(user);
+          }
+        }
+
+        return {
+          ...project,
+          assignees: users,
+        };
+      }),
+    );
+
+    return populatedProjects;
   },
 });
 
